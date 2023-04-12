@@ -16,7 +16,7 @@ console.log("Mongo is connected !!!  ");
 app.use(express.json())
 app.use(cors());
 
-const PORT = 4000;
+const PORT = process.env.PORT
 
 // password encrypted 
 async function generateHashedPassword(password){
