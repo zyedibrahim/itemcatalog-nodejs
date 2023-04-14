@@ -37,6 +37,18 @@ app.get("/", function (request, response) {
   response.send("🙋‍♂️, 🌏 🎊✨🤩");
 });
 
+// app.delete("/products/categories/all", async function (request, response) {
+  
+
+//   const datas = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .deleteMany({})
+
+//   response.send(datas);
+// });
+
+
 app.post("/products/categories/all", async function (request, response) {
   const data=request.body;
   
@@ -475,6 +487,21 @@ else{
 
 });
 
+
+// app.post("/add/address/:id", async function (request, response) {
+ 
+//   const data = request.body;
+  
+//     const {id} = request.params;
+//     const getdataup = await client
+//     .db("userdetails")
+//     .collection("user-accounts")
+//     .findOneAndUpdate({_id:new ObjectId(id)}, {$set: [address]  }  )
+  
+//   response.status(200).send({"status": "200 Ok",  })
+  
+//   });
+  
 
 
 
