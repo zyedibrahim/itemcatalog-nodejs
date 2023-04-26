@@ -493,16 +493,15 @@ app.put("/add/address/:id", async function (request, response) {
  
   const data = request.body;
   const {id} = request.params;
-const newsdata = [...data,data]
-  // if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-  //   return response.status(400).send("Invalid id");
-  // }
+  const addressdata = data
 
+const newsdata = data
     const getdataup = await client
     .db("userdetails")
     .collection("user-accounts")
-    .updateOne({_id:new ObjectId(id)}, {$set: {address:newsdata}} )
+    .updateOne({_id:new ObjectId(id)}, {$push: {address:newsdata}} , { new: true } )
 
+    console.log(newsdata)
 
   response.status(200).send( {"status":"200 ok"})
   
@@ -517,9 +516,9 @@ const {id}=request.params
     .collection("user-accounts")
     .findOne({_id:new ObjectId(id)})
     
+const addressdata = getdataup.address
 
-
-  response.status(200).send( {"status":"200 ok",getdataup})
+  response.status(200).send( {"status":"200 ok",addressdata})
   
   });
 
