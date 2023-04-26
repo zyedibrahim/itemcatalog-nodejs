@@ -8,6 +8,7 @@ import bcrypt from "bcrypt"
 import cors from "cors"
 import shortid from "shortid";
 import { MongoClient, ObjectId } from "mongodb";
+
 const MONGO_URL = process.env.MONGO_URL
 const client = new MongoClient(MONGO_URL); // dial
 // Top level await
@@ -488,20 +489,40 @@ else{
 });
 
 
-// app.post("/add/address/:id", async function (request, response) {
+app.put("/add/address/:id", async function (request, response) {
  
-//   const data = request.body;
+  const data = request.body;
+  const {id} = request.params;
+const newsdata = [...data,data]
+  // if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+  //   return response.status(400).send("Invalid id");
+  // }
+
+    const getdataup = await client
+    .db("userdetails")
+    .collection("user-accounts")
+    .updateOne({_id:new ObjectId(id)}, {$set: {address:newsdata}} )
+
+
+  response.status(200).send( {"status":"200 ok"})
   
-//     const {id} = request.params;
-//     const getdataup = await client
-//     .db("userdetails")
-//     .collection("user-accounts")
-//     .findOneAndUpdate({_id:new ObjectId(id)}, {$set: [address]  }  )
+  });
+app.get("/add/address/:id", async function (request, response) {
+ 
+const {id}=request.params
+
+
+    const getdataup = await client
+    .db("userdetails")
+    .collection("user-accounts")
+    .findOne({_id:new ObjectId(id)})
+    
+
+
+  response.status(200).send( {"status":"200 ok",getdataup})
   
-//   response.status(200).send({"status": "200 Ok",  })
-  
-//   });
-  // d
+  });
+
 
 
 
