@@ -150,6 +150,29 @@ app.post("/products/categories/soap&detergent", async function (request, respons
   response.send(datas);
 });
 
+app.post("/products/categories/name", async function (request, response) {
+  
+  const bodydata =request.body
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.insertOne(bodydata) 
+  
+  response.send(datas);
+});
+app.get("/products/categories/name", async function (request, response) {
+  
+  const bodydata =request.body
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.find({})
+.toArray() 
+  
+  response.send(datas);
+});
 
 
 
