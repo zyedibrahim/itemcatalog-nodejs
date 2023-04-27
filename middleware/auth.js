@@ -5,7 +5,7 @@ import Jwt from 'jsonwebtoken'
     try{
         const token = request.header("x-auth-token")
         console.log(token);
-        Jwt.verify(token,process.env.secretekey)
+        Jwt.verify(token,process.env.secretkey)
         next();
     }
     catch(err){

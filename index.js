@@ -8,7 +8,7 @@ import bcrypt from "bcrypt"
 import cors from "cors"
 import shortid from "shortid";
 import { MongoClient, ObjectId } from "mongodb";
-
+import {auth} from "./middleware/auth.js"
 const MONGO_URL = process.env.MONGO_URL
 const client = new MongoClient(MONGO_URL); // dial
 // Top level await
@@ -62,118 +62,145 @@ console.log(data);
   response.send(datas);
 });
 
-// categories Milk
-app.post("/products/categories/milk", async function (request, response) {
-  const data=request.body;
+// // categories Milk
+// app.post("/products/categories/milk", async function (request, response) {
+//   const data=request.body;
   
-  const alldata = await client
-  .db("products")
-  .collection("allproducts")
-  .insertMany(data)
-  
-
-  const datas = await client
-  .db("products")
-  .collection("categories_milk")
-  .insertOne(data)
-
-
-
-  response.send(datas);
-});
-// categories fruit
-app.post("/products/categories/fruit", async function (request, response) {
-  const data=request.body;
-  
-  const alldata = await client
-  .db("products")
-  .collection("allproducts")
-  .insertMany(data)
-
-  const datas = await client
-  .db("products")
-  .collection("categories_fruit")
-  .insertOne(data)
-  response.send(datas);
-});
-// categories vegetables
-app.post("/products/categories/vegetables", async function (request, response) {
-  const data=request.body;
-
-  const alldata = await client
-  .db("products")
-  .collection("allproducts")
-  .insertMany(data)
-
-  const datas = await client
-  .db("products")
-  .collection("categories_vegetables")
-  .insertOne(data)
+//   const alldata = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .insertMany(data)
   
 
-  response.send(datas);
-});
-// categories oil
-app.post("/products/categories/oil", async function (request, response) {
-  const data=request.body;
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_milk")
+//   .insertOne(data)
 
-  const alldata = await client
-  .db("products")
-  .collection("allproducts")
-  .insertMany(data)
 
-  const datas = await client
-  .db("products")
-  .collection("categories_oil")
-  .insertOne(data)
 
-  response.send(datas);
-});
-// categories soap&detergent
-app.post("/products/categories/soap&detergent", async function (request, response) {
-  const data=request.body;
+//   response.send(datas);
+// });
+// // categories fruit
+// app.post("/products/categories/fruit", async function (request, response) {
+//   const data=request.body;
   
-  const alldata = await client
-  .db("products")
-  .collection("allproducts")
-  .insertMany(data)
+//   const alldata = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .insertMany(data)
+
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_fruit")
+//   .insertOne(data)
+//   response.send(datas);
+// });
+// // categories vegetables
+// app.post("/products/categories/vegetables", async function (request, response) {
+//   const data=request.body;
+
+//   const alldata = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .insertMany(data)
+
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_vegetables")
+//   .insertOne(data)
+  
+
+//   response.send(datas);
+// });
+// // categories oil
+// app.post("/products/categories/oil", async function (request, response) {
+//   const data=request.body;
+
+//   const alldata = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .insertMany(data)
+
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_oil")
+//   .insertOne(data)
+
+//   response.send(datas);
+// });
+// // categories soap&detergent
+// app.post("/products/categories/soap&detergent", async function (request, response) {
+//   const data=request.body;
+  
+//   const alldata = await client
+//   .db("products")
+//   .collection("allproducts")
+//   .insertMany(data)
 
 
-  const datas = await client
-  .db("products")
-  .collection("categories_soap&detergent")
-  .insertOne(data)
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_soap&detergent")
+//   .insertOne(data)
   
 
 
 
-  response.send(datas);
-});
+//   response.send(datas);
+// });
 
-app.post("/products/categories/name", async function (request, response) {
+// // fruit
+//  app.get("/products/categories/fruit", async function (request, response) {
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_fruit")
+//   .find({})
+//   .toArray()
   
-  const bodydata =request.body
-  
-  const datas = await client
-  .db("products")
-  .collection("catagories")
-.insertOne(bodydata) 
-  
-  response.send(datas);
-});
-app.get("/products/categories/name", async function (request, response) {
-  
-  const bodydata =request.body
-  
-  const datas = await client
-  .db("products")
-  .collection("catagories")
-.find({})
-.toArray() 
-  
-  response.send(datas);
-});
+//   response.send(datas);
+// });
 
+// // vegetables
+//  app.get("/products/categories/vegetables", async function (request, response) {
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_vegetables")
+//   .find({})
+//   .toArray()
+  
+//   response.send(datas);
+// });
+// // milk
+//  app.get("/products/categories/milk", async function (request, response) {
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_milk")
+//   .find({})
+//   .toArray()
+  
+//   response.send(datas);
+// });
+// // oil
+//  app.get("/products/categories/oil", async function (request, response) {
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_oil")
+//   .find({})
+//   .toArray()
+  
+//   response.send(datas);
+// });
+// // soap
+//  app.get("/products/categories/soap&detergent", async function (request, response) {
+//   const datas = await client
+//   .db("products")
+//   .collection("categories_soap&detergent")
+//   .find({})
+//   .toArray()
+  
+//   response.send(datas);
+// });
 
 
  //  all products get
@@ -186,58 +213,72 @@ app.get("/products/categories/name", async function (request, response) {
   
   response.send(datas);
 });
-// fruit
- app.get("/products/categories/fruit", async function (request, response) {
-  const datas = await client
-  .db("products")
-  .collection("categories_fruit")
-  .find({})
-  .toArray()
-  
-  response.send(datas);
-});
 
-// vegetables
- app.get("/products/categories/vegetables", async function (request, response) {
+app.post("/products/categories/name", async function (request, response) {
+  
+  const bodydata =request.body
+  
   const datas = await client
   .db("products")
-  .collection("categories_vegetables")
-  .find({})
-  .toArray()
+  .collection("catagories")
+.insertOne(bodydata) 
+  
+  response.status(200).send({"status":"200 ok"});
+});
+app.get("/products/categories/name",auth,async function (request, response) {
+  
+ 
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.find({})
+.toArray() 
   
   response.send(datas);
 });
-// milk
- app.get("/products/categories/milk", async function (request, response) {
+app.get("/products/categories/name/:id",auth,async function (request, response) {
+  
+  const {id} =request.params
+  
   const datas = await client
   .db("products")
-  .collection("categories_milk")
-  .find({})
-  .toArray()
-  
+  .collection("catagories")
+.findOne({_id: new ObjectId(id)})
+  console.log(datas,"id catagories");
   response.send(datas);
 });
-// oil
- app.get("/products/categories/oil", async function (request, response) {
+app.get("/alluser/accounts",auth,async function  (request, response) {
+    
   const datas = await client
-  .db("products")
-  .collection("categories_oil")
+  .db("userdetails")
+  .collection("user-accounts")
   .find({})
-  .toArray()
-  
-  response.send(datas);
-});
-// soap
- app.get("/products/categories/soap&detergent", async function (request, response) {
-  const datas = await client
-  .db("products")
-  .collection("categories_soap&detergent")
-  .find({})
-  .toArray()
-  
-  response.send(datas);
-});
+   .toArray({})
+ 
+   const newdata = datas
+const array =[]
 
+for(let i = 0 ; i < newdata.length;i++){
+// console.log(newdata[i].username);
+
+const temp = {
+username:newdata[i].username,
+email:newdata[i].email,
+roll : newdata[i].roll
+}
+ 
+array.push(temp)
+
+
+
+}
+
+   response.status(200).send({"status": "200 ok", array})
+
+
+
+});
 
 
 app.get("/products/:id", async function (request, response) {
@@ -414,8 +455,8 @@ const data = {
   username:username,
   email:email,
   password:hashedpassword,
-  verifyotp: shortid.generate()
- 
+  verifyotp: shortid.generate(),
+  roll : "user"
 }
 
 
