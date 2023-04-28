@@ -51,15 +51,28 @@ app.get("/", function (request, response) {
 
 
 app.post("/products/categories/all", async function (request, response) {
-  const data=request.body;
-  
+  const bodydata=request.body;
   const datas = await client
   .db("products")
   .collection("allproducts")
-  .insertMany(data)
+  .insertOne(bodydata)
   
-console.log(data);
-  response.send(datas);
+console.log(bodydata);
+  response.status(200).send({"status":"200 ok",datas})
+});
+app.delete("/products/categories/all/:id",auth,async function (request, response) {
+  const {id}=request.params;
+  try{
+    const datas = await client
+    .db("products")
+    .collection("allproducts")
+    .deleteOne({_id:new ObjectId(id)})
+    response.status(200).send({"status":"200 ok"})
+}
+catch(err){
+  response.status(400).send({"status":"something went wrong"})
+}
+
 });
 
 // // categories Milk
@@ -204,7 +217,7 @@ console.log(data);
 
 
  //  all products get
- app.get("/products/categories/all", async function (request, response) {
+ app.get("/products/categories/name/all", async function (request, response) {
   const datas = await client
   .db("products")
   .collection("allproducts")
@@ -245,7 +258,7 @@ app.get("/products/categories/name/:id",auth,async function (request, response) 
   .db("products")
   .collection("catagories")
 .findOne({_id: new ObjectId(id)})
-  console.log(datas,"id catagories");
+  
   response.send(datas);
 });
 app.get("/alluser/accounts",auth,async function  (request, response) {
@@ -279,6 +292,32 @@ array.push(temp)
 
 
 });
+
+
+app.delete("/products/categories/name/:id",auth,async function (request, response) {
+  
+  const {id} =request.params
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.deleteOne({_id: new ObjectId(id)})
+  
+  response.send(datas);
+});
+app.put("/products/categories/name/:id",auth,async function (request, response) {
+  
+  const {id} =request.params
+  const {catagories} = request.body
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.updateOne({_id: new ObjectId(id)},{$set :{catagories:catagories}})
+  
+  response.status(200).send({"status": "200 ok "})
+});
+
 
 
 app.get("/products/:id", async function (request, response) {
