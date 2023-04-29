@@ -75,192 +75,8 @@ catch(err){
 
 });
 
-// // categories Milk
-// app.post("/products/categories/milk", async function (request, response) {
-//   const data=request.body;
-  
-//   const alldata = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .insertMany(data)
-  
 
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_milk")
-//   .insertOne(data)
-
-
-
-//   response.send(datas);
-// });
-// // categories fruit
-// app.post("/products/categories/fruit", async function (request, response) {
-//   const data=request.body;
-  
-//   const alldata = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .insertMany(data)
-
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_fruit")
-//   .insertOne(data)
-//   response.send(datas);
-// });
-// // categories vegetables
-// app.post("/products/categories/vegetables", async function (request, response) {
-//   const data=request.body;
-
-//   const alldata = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .insertMany(data)
-
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_vegetables")
-//   .insertOne(data)
-  
-
-//   response.send(datas);
-// });
-// // categories oil
-// app.post("/products/categories/oil", async function (request, response) {
-//   const data=request.body;
-
-//   const alldata = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .insertMany(data)
-
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_oil")
-//   .insertOne(data)
-
-//   response.send(datas);
-// });
-// // categories soap&detergent
-// app.post("/products/categories/soap&detergent", async function (request, response) {
-//   const data=request.body;
-  
-//   const alldata = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .insertMany(data)
-
-
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_soap&detergent")
-//   .insertOne(data)
-  
-
-
-
-//   response.send(datas);
-// });
-
-// // fruit
-//  app.get("/products/categories/fruit", async function (request, response) {
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_fruit")
-//   .find({})
-//   .toArray()
-  
-//   response.send(datas);
-// });
-
-// // vegetables
-//  app.get("/products/categories/vegetables", async function (request, response) {
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_vegetables")
-//   .find({})
-//   .toArray()
-  
-//   response.send(datas);
-// });
-// // milk
-//  app.get("/products/categories/milk", async function (request, response) {
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_milk")
-//   .find({})
-//   .toArray()
-  
-//   response.send(datas);
-// });
-// // oil
-//  app.get("/products/categories/oil", async function (request, response) {
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_oil")
-//   .find({})
-//   .toArray()
-  
-//   response.send(datas);
-// });
-// // soap
-//  app.get("/products/categories/soap&detergent", async function (request, response) {
-//   const datas = await client
-//   .db("products")
-//   .collection("categories_soap&detergent")
-//   .find({})
-//   .toArray()
-  
-//   response.send(datas);
-// });
-
-
- //  all products get
- app.get("/products/categories/name/all", async function (request, response) {
-  const datas = await client
-  .db("products")
-  .collection("allproducts")
-  .find({})
-  .toArray()
-  
-  response.send(datas);
-});
-
-app.post("/products/categories/name", async function (request, response) {
-  
-  const bodydata =request.body
-  
-  const datas = await client
-  .db("products")
-  .collection("catagories")
-.insertOne(bodydata) 
-  
-  response.status(200).send({"status":"200 ok"});
-});
-app.get("/products/categories/name",auth,async function (request, response) {
-  
- 
-  
-  const datas = await client
-  .db("products")
-  .collection("catagories")
-.find({})
-.toArray() 
-  
-  response.send(datas);
-});
-app.get("/products/categories/name/:id",auth,async function (request, response) {
-  
-  const {id} =request.params
-  
-  const datas = await client
-  .db("products")
-  .collection("catagories")
-.findOne({_id: new ObjectId(id)})
-  
-  response.send(datas);
-});
+// all useraccount
 app.get("/alluser/accounts",auth,async function  (request, response) {
     
   const datas = await client
@@ -272,13 +88,19 @@ app.get("/alluser/accounts",auth,async function  (request, response) {
    const newdata = datas
 const array =[]
 
+console.log(datas);
+
 for(let i = 0 ; i < newdata.length;i++){
 // console.log(newdata[i].username);
 
 const temp = {
+  _id: newdata[i]._id,
 username:newdata[i].username,
 email:newdata[i].email,
-roll : newdata[i].roll
+roll : newdata[i].roll,
+phone : newdata[i].phone,
+address: newdata[i].address,
+
 }
  
 array.push(temp)
@@ -294,7 +116,130 @@ array.push(temp)
 });
 
 
-app.delete("/products/categories/name/:id",auth,async function (request, response) {
+
+ //  all products get
+ app.get("/products/all", async function (request, response) {
+  const datas = await client
+  .db("products")
+  .collection("allproducts")
+  .find({})
+  .toArray()
+  
+  response.send(datas);
+});
+
+// all products get with id
+app.get("/products/all/:id",async function (request, response) {
+  
+  const {id} =request.params
+  
+  const datas = await client
+  .db("products")
+  .collection("allproducts")
+.findOne({_id: new ObjectId(id)})
+  
+  response.send(datas);
+});
+// all products add product
+app.post("/products/all",async function (request, response) {
+  
+  const bodydata = request.body
+  
+try{
+  const datas = await client
+  .db("products")
+  .collection("allproducts")
+  .insertOne(bodydata)
+  response.status(200).send({"status": "200 ok"})
+}
+catch(err){
+  response.status(400).send(err)
+  
+}
+
+
+
+
+});
+// edit products by id
+app.put("/products/all/:id",auth,async function (request, response) {
+  const{id}=request.params
+  const bodydata = request.body
+  
+try{
+  const datas = await client
+  .db("products")
+  .collection("allproducts")
+  .updateOne({_id:new ObjectId(id)} ,{$set : bodydata } )
+  response.status(200).send({"status": "200 ok"})
+}
+catch(err){
+  response.status(400).send(err)
+  
+}
+
+
+
+
+});
+// delete products by id
+app.delete("/products/all/:id",auth,async function (request, response) {
+  const{id}=request.params
+ 
+try{
+  const datas = await client
+  .db("products")
+  .collection("allproducts")
+  .deleteOne({_id:new ObjectId(id)})
+  response.status(200).send({"status": "200 ok"})
+}
+catch(err){
+  response.status(400).send(err)
+  
+}
+
+
+
+
+});
+
+
+// catagories 
+app.get("/products/categories/name/all",auth,async function (request, response) {
+  
+ 
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.find({})
+.toArray() 
+  
+  response.send(datas);
+});
+app.post("/products/categories/name/all", async function (request, response) {
+  
+  const bodydata =request.body
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.insertOne(bodydata) 
+  
+  response.status(200).send({"status":"200 ok"});
+});
+app.get("/products/categories/name/all/:id", async function (request, response) {
+  
+  const {id} =request.params
+  
+  const datas = await client
+  .db("products")
+  .collection("catagories")
+.findOne({_id : new ObjectId(id)}) 
+  
+  response.status(200).send({"status":"200 ok",datas});
+});
+app.delete("/products/categories/name/all/:id",auth,async function (request, response) {
   
   const {id} =request.params
   
@@ -305,7 +250,7 @@ app.delete("/products/categories/name/:id",auth,async function (request, respons
   
   response.send(datas);
 });
-app.put("/products/categories/name/:id",auth,async function (request, response) {
+app.put("/products/categories/name/all/:id",auth,async function (request, response) {
   
   const {id} =request.params
   const {catagories} = request.body
@@ -315,21 +260,10 @@ app.put("/products/categories/name/:id",auth,async function (request, response) 
   .collection("catagories")
 .updateOne({_id: new ObjectId(id)},{$set :{catagories:catagories}})
   
-  response.status(200).send({"status": "200 ok "})
+  response.status(200).send({"status": "200 ok"})
 });
 
 
-
-app.get("/products/:id", async function (request, response) {
-  const {id}=request.params;
-  
-  const datas = await client
-  .db("products")
-  .collection("allproducts")
-  .findOne({_id:new ObjectId(id)})
-
-  response.status(200).send({"status":"Successfully geted",datas })
-});
 
 // login
 app.post("/login", async function (request, response) {
@@ -609,6 +543,8 @@ const newsdata = data
   response.status(200).send( {"status":"200 ok"})
   
   });
+
+
 app.get("/add/address/:id", async function (request, response) {
  
 const {id}=request.params
