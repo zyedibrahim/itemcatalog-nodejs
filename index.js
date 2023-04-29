@@ -114,6 +114,75 @@ array.push(temp)
 
 
 });
+app.put("/alluser/accounts/:id",async function  (request, response) {
+    
+  const{id}=request.params
+  const {address,payment,product} = request.body
+  
+
+try{
+  const orderdatabase = {
+    orderaddress: address,
+    orderproduct:product,
+    payment:payment
+  }
+
+console.log(orderdatabase);
+
+  // let dataid =[]
+  // const datastock =[]
+  
+  // const storestock =[]
+  // // console.log(orderdatabase);
+  
+  // const temp = orderdatabase.orderproduct
+  
+  // for (let i =0 ;i <temp.length;i++){
+  //   dataid.push(temp[i]._id)
+  //   datastock.push(temp[i].quantity)
+  // }
+  
+  // for(let i = 0 ; i< dataid.length;i++){
+   
+  //   const stockget = await client
+  // .db("products")
+  //   .collection("allproducts")
+  //   .findOne({_id:new ObjectId(dataid[i])}  )
+  
+  //   storestock.push(stockget.stock)
+  
+    
+  // }
+  
+  // for(let i = 0 ; i< dataid.length;i++){
+  // const stockchange = await client
+  // .db("products")
+  //   .collection("allproducts")
+  //   .updateOne({_id:new ObjectId(dataid[i])} ,{$set : {stock: storestock[i] - datastock[i] }  }  )
+  
+  // }
+
+
+
+
+
+
+  
+response.status(200).send({"status":"200 ok"})
+
+  
+  
+} 
+catch(err){
+  response.status(400).send(err)
+}
+
+
+
+
+
+
+});
 
 
 
