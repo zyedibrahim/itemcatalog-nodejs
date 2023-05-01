@@ -100,6 +100,7 @@ email:newdata[i].email,
 roll : newdata[i].roll,
 phone : newdata[i].phone,
 address: newdata[i].address,
+orders:newdata[i].orders,
 
 }
  
@@ -114,61 +115,97 @@ array.push(temp)
 
 
 });
+app.get("/alluser/accounts/:id",auth,async function  (request, response) {
+    
+  const {id} =request.params
+  const datas = await client
+  .db("userdetails")
+  .collection("user-accounts")
+  .findOne({_id:new ObjectId(id)})
+ 
+const newdata = datas.orders
+
+
+   response.status(200).send({"status": "200 ok",newdata})
+
+
+
+});
 app.put("/alluser/accounts/:id",async function  (request, response) {
     
   const{id}=request.params
-  const {address,payment,product} = request.body
+  const {address,payment,product,_id} = request.body
   
 
 try{
   const orderdatabase = {
     orderaddress: address,
     orderproduct:product,
-    payment:payment
+    payment:payment,
+    _id:_id,
+    date:new Date()
   }
 
-console.log(orderdatabase);
+console.log(orderdatabase._id);
 
-  // let dataid =[]
-  // const datastock =[]
+  let dataid =[]
+  const datastock =[]
   
-  // const storestock =[]
-  // // console.log(orderdatabase);
+  const storestock =[]
   
-  // const temp = orderdatabase.orderproduct
+  const solddata =[]
+
+
   
-  // for (let i =0 ;i <temp.length;i++){
-  //   dataid.push(temp[i]._id)
-  //   datastock.push(temp[i].quantity)
-  // }
+  const temp = orderdatabase.orderproduct
   
-  // for(let i = 0 ; i< dataid.length;i++){
+  for (let i =0 ;i <temp.length;i++){
+    dataid.push(temp[i]._id)
+    datastock.push(temp[i].quantity)
+  }
+  
+  for(let i = 0 ; i< dataid.length;i++){
    
-  //   const stockget = await client
-  // .db("products")
-  //   .collection("allproducts")
-  //   .findOne({_id:new ObjectId(dataid[i])}  )
+    const stockget = await client
+  .db("products")
+    .collection("allproducts")
+    .findOne({_id:new ObjectId(dataid[i])}  )
   
-  //   storestock.push(stockget.stock)
+    storestock.push(stockget.stock)
+    solddata.push(stockget.sold)
+  }
+
+
+  for(let i = 0 ; i< dataid.length;i++){
+  const stockchange = await client
+  .db("products")
+    .collection("allproducts")
+    .updateOne({_id:new ObjectId(dataid[i])} ,{$set : {stock: storestock[i] - datastock[i] }  }  )
   
-    
-  // }
+  }
+
+
+  for(let i = 0 ; i< dataid.length;i++){
+  const stockchange = await client
+  .db("products")
+    .collection("allproducts")
+    .updateOne({_id:new ObjectId(dataid[i])} ,{$set : {sold:  solddata[i]+datastock[i] }  }  )
   
-  // for(let i = 0 ; i< dataid.length;i++){
-  // const stockchange = await client
-  // .db("products")
-  //   .collection("allproducts")
-  //   .updateOne({_id:new ObjectId(dataid[i])} ,{$set : {stock: storestock[i] - datastock[i] }  }  )
+  }
+
+  const setorders = await client
+  .db("userdetails")
+  .collection("user-accounts")
+    .updateOne({_id:new ObjectId(orderdatabase._id)} ,{$push :{orders: orderdatabase }} )
   
-  // }
 
-
+console.log(setorders);
 
 
 
 
   
-response.status(200).send({"status":"200 ok"})
+response.status(200).send({"status":"200 ok",setorders})
 
   
   
