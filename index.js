@@ -401,7 +401,7 @@ response.status(404).send({"status":"Password is incorrect"})
 
 else if(getdata.username === "adminuser"){
   const adtoken = Jwt.sign({id:getdata._id},process.env.secretkey)
- response.status(200).send({"status":"Login successful",adtoken:adtoken})
+ response.status(200).send({"status":"Login successful",adtoken:adtoken,_id:getdata._id})
 }
 
 else{
@@ -667,7 +667,24 @@ const addressdata = getdataup.address
   
   });
 
-
+  app.put("/add/address/del/:id", async function (request, response) {
+ 
+    const data = request.body;
+    const {id} = request.params;
+    
+  
+  const newsdata = data
+      const getdataup = await client
+      .db("userdetails")
+      .collection("user-accounts")
+      .updateOne({_id:new ObjectId(id)}, {$set: {address:newsdata}} , { new: true } )
+  
+      console.log(data)
+  
+    response.status(200).send( {"status":"200 ok"})
+    
+    });
+  
 
 
 
