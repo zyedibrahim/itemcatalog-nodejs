@@ -334,6 +334,8 @@ app.post("/products/categories/name/all", async function (request, response) {
   
   response.status(200).send({"status":"200 ok"});
 });
+
+
 app.get("/products/categories/name/all/:id", async function (request, response) {
   
   const {id} =request.params
@@ -345,6 +347,7 @@ app.get("/products/categories/name/all/:id", async function (request, response) 
   
   response.status(200).send({"status":"200 ok",datas});
 });
+
 app.delete("/products/categories/name/all/:id",auth,async function (request, response) {
   
   const {id} =request.params
@@ -356,6 +359,7 @@ app.delete("/products/categories/name/all/:id",auth,async function (request, res
   
   response.send(datas);
 });
+
 app.put("/products/categories/name/all/:id",auth,async function (request, response) {
   
   const {id} =request.params
@@ -374,56 +378,59 @@ app.put("/products/categories/name/all/:id",auth,async function (request, respon
 // login
 app.post("/login", async function (request, response) {
   
-  
+  const {username,password}=request.body;
+
   try{
-    
-    const {username,password}=request.body;
+    const getdata = await client
+    .db("userdetails")
+    .collection("user-accounts")
+    .findOne({username:username})
+    console.log(getdata);
   
-  const getdata = await client
-  .db("userdetails")
-  .collection("user-accounts")
-  .findOne({username:username})
-  const isppasswordcheck = await bcrypt.compare(password,getdata.password)
+    if(!getdata){
+      response.send({"status":"This username not found "})
+    }
+    else if(getdata.verified === false){
+      response.send({"status":"email not activated "})
+    }
   
-
-
-  if(!getdata){
-    response.status(404).send({"status":"This username not found "})
+  else if(getdata.username === "adminuser"){
+    const isppasswordcheck = await bcrypt.compare(password,getdata?.password)
+   
+    if(isppasswordcheck === true ){
+      console.log("password matched");
+      const adtoken = Jwt.sign({id:getdata._id},process.env.secretkey)
+      response.status(200).send({"status":"Login successful",adtoken:adtoken,_id:getdata._id})
+    }
+    else{
+      response.send({"status":"Incorrect Password"})
+  console.log("password not matched");
+    }
+  
   }
-  else if(getdata.verified !== "true"){
-    
-    response.status(404).send({"status":"email not activated "})
+  
+  else{
+    const isppasswordcheck = await bcrypt.compare(password,getdata?.password)
+   
+    if(isppasswordcheck === true ){
+      console.log("password matched");
+      const token = Jwt.sign({id:getdata._id},process.env.secretkey)
+      response.status(200).send({"status":"Login successful",token:token,username:getdata.username,_id:getdata._id})
+    }
+    else{
+      response.send({"status":"Incorrect Password"})
+      console.log("password not matched");
+  
+      }
+      
+  
+  }
+  
+  }
+  catch(err){
+    response.send(err)
   }
 
-else if(isppasswordcheck !== true ){
-response.status(404).send({"status":"Password is incorrect"})
-}
-
-else if(getdata.username === "adminuser"){
-  const adtoken = Jwt.sign({id:getdata._id},process.env.secretkey)
- response.status(200).send({"status":"Login successful",adtoken:adtoken,_id:getdata._id})
-}
-
-else{
-
-  const getdata = await client
-  .db("userdetails")
-  .collection("user-accounts")
-  .findOne({username:username})
-
-
-
-  const token = Jwt.sign({id:getdata._id},process.env.secretkey)
-  response.status(200).send({"status":"Login successful",token:token,username:getdata.username,_id:getdata._id})
-
-}
-
-
-}
-
-catch(err){
-  console.log(err);
-}
 
 
 });
@@ -603,6 +610,109 @@ console.log(err)
 
 });
 
+// forgotpassword send link 
+app.post("/user/forgotpassword/send", async function (request, response) {
+  const {email}=request.body;
+  try{
+    
+    const getemail = await client
+    .db("userdetails")
+    .collection("user-accounts")
+    .findOne({email:email})
+   
+  if(!getemail){
+    response.status(404).send({"status":"400"})
+  }
+else{
+  const secret = process.env.secretkey+getemail.password
+   
+  const token = Jwt.sign({email:getemail.email,id:getemail._id},secret,{
+    expiresIn:"5m"
+  })
+
+const link = `http://localhost:5173/users/resetpassword?id=${getemail._id}&token=${token}`
+
+response.status(200).send({"status": "Reset Link Send Successfully Sent On Register E-mail" })
+  
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+  
+    service:"gmail",
+     auth: {
+       user: "syed0333800@gmail.com", // generated ethereal user
+       pass: process.env.GPASS, // generated ethereal password
+     },
+   });
+ 
+ var mailoption ={
+   from: 'Unknow Co LTD PVT', // sender address
+   to: email, // list of receivers
+   subject: "Reset Password Link✔", // Subject line
+   text: link,
+ }
+ 
+ 
+   // send mail with defined transport object
+   transporter.sendMail(mailoption,async function (err,info){
+ if(err){
+  response.status(400).send({"status":"This is not a valid email"})
+ }
+ else{
+   
+   console.log("email sent",info.response);
+
+  }
+  
+})
+
+
+if(insertdata.verifyotp  !== ""){
+  response.status(200).send({"status":"OTP sended"})
+}else{
+  
+  response.status(200).send({"status":"Otp failed to sent"})
+}
+
+
+
+
+
+
+}
+ 
+}
+ 
+catch(err){
+console.log(err)
+
+}
+
+});
+
+// forgotpassword send passowrd to reset password
+app.put("/users/resetpassword", async function (request, response) {
+ const {id} =request.query
+  const {password}=request.body;
+ 
+  try{
+    const encryptedpass = await generateHashedPassword(password)
+console.log(encryptedpass,"password");
+    const getpass = await client
+    .db("userdetails")
+    .collection("user-accounts")
+    .findOne({_id:new ObjectId(id)},{$set : {password:encryptedpass}} )
+   
+    response.status(200).send({"status": "Password Updated Successfully",getpass})
+
+}
+
+catch(err){
+  response.status(404).send({err})
+
+}
+
+});
+
 
 // verify otp
 app.post("/verifyotp", async function (request, response) {
@@ -672,14 +782,14 @@ const addressdata = getdataup.address
     const data = request.body;
     const {id} = request.params;
     
-  
-  const newsdata = data
+ console.log(data.iddata);
+//  { $pull: { address: { $in: [ { $slice: [indexToRemove, 1] } ] } } }
       const getdataup = await client
       .db("userdetails")
       .collection("user-accounts")
-      .updateOne({_id:new ObjectId(id)}, {$set: {address:newsdata}} , { new: true } )
+      .updateOne({_id:new ObjectId(id)},{ $pull: { address: { $in: [ { $slice: [data.iddata, 1] } ] } } } )
   
-      console.log(data)
+      // console.log(data)
   
     response.status(200).send( {"status":"200 ok"})
     
