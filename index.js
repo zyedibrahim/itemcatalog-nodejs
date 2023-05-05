@@ -576,10 +576,11 @@ const getotp = await client
    // send mail with defined transport object
    transporter.sendMail(mailoption,async function (err,info){
  if(err){
-  console.log(info.response);
-}
+  response.status(400).send({"status":"This is not a valid email"})
+ }
  else{
  
+  response.status(200).send({"status":"200 ok"})
    console.log("email sent",info.response);
 
   }
@@ -590,6 +591,7 @@ const getotp = await client
 if(insertdata.verifyotp  !== ""){
   response.status(200).send({"status":"200 ok"})
 }else{
+  
   response.status(200).send({"status":"Otp failed to sent"})
 }
 
@@ -615,60 +617,64 @@ app.post("/user/forgotpassword/send", async function (request, response) {
     .findOne({email:email})
    
   if(!getemail){
-    response.status(404).send({"status":"400"})
+    response.status(404).send({"status":"This Email Not Exists"})
   }
 else{
-  const secret = process.env.secretkey+getemail.password
+
+
+  const insertdata = await client
+  .db("userdetails")
+  .collection("user-accounts")
+  .findOne({email:email})
+  
+  if(insertdata.verifyotp  !== ""){
+
+
+    const secret = process.env.secretkey+getemail.password
    
-  const token = Jwt.sign({email:getemail.email,id:getemail._id},secret,{
-    expiresIn:"5m"
+    const token = Jwt.sign({email:getemail.email,id:getemail._id},secret,{
+      expiresIn:"5m"
+    })
+  
+  const link = `https://grocery-item-catalog.netlify.app/users/resetpassword?id=${getemail._id}&token=${token}`
+      
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+    
+      service:"gmail",
+       auth: {
+         user: "syed0333800@gmail.com", // generated ethereal user
+         pass: process.env.GPASS, // generated ethereal password
+       },
+     });
+   
+   var mailoption ={
+     from: 'Unknow Co LTD PVT', // sender address
+     to: email, // list of receivers
+     subject: "Reset Password Link✔", // Subject line
+     text: link,
+   }
+   
+   
+     // send mail with defined transport object
+     transporter.sendMail(mailoption,async function (err,info){
+   if(err){
+    response.status(400).send({"status":"This is not a valid email"})
+   }
+   else{
+     
+     console.log("email sent",info.response);
+  
+    }
+    
   })
-
-const link = `https://grocery-item-catalog.netlify.app/users/resetpassword?id=${getemail._id}&token=${token}`
-
-response.status(200).send({"status": "Reset Link Send Successfully Sent On Register E-mail" })
   
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
-  
-    service:"gmail",
-     auth: {
-       user: "syed0333800@gmail.com", // generated ethereal user
-       pass: process.env.GPASS, // generated ethereal password
-     },
-   });
- 
- var mailoption ={
-   from: 'Unknow Co LTD PVT', // sender address
-   to: email, // list of receivers
-   subject: "Reset Password Link✔", // Subject line
-   text: link,
- }
- 
- 
-   // send mail with defined transport object
-   transporter.sendMail(mailoption,async function (err,info){
- if(err){
-  response.status(400).send({"status":"This is not a valid email"})
- }
- else{
-   
-   console.log("email sent",info.response);
-
+    response.status(200).send({"status":"200 ok"})
+  }else{
+    
+    response.status(200).send({"status":"Otp failed to sent"})
   }
   
-})
-
-
-if(insertdata.verifyotp  !== ""){
-  response.status(200).send({"status":"OTP sended"})
-}else{
-  
-  response.status(200).send({"status":"Otp failed to sent"})
-}
-
-
-
 
 
 
