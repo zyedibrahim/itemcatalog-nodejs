@@ -738,6 +738,22 @@ else{
 });
 
 
+// update address
+app.post("/update/address/:id", async function (request, response) {
+ 
+const data = request.body;
+const {id} = request.params;
+  const getdataup = await client
+  .db("userdetails")
+  .collection("user-accounts")
+  .updateOne({_id:new ObjectId(id),"address.id": data.id}, {$set: {"address.$":data}} )
+
+  response.status(200).send( {"status":"200 ok"})
+  
+  });
+
+
+// add address
 app.put("/add/address/:id", async function (request, response) {
  
   const data = request.body;
@@ -773,7 +789,7 @@ const addressdata = getdataup.address
   
   });
 
-  app.put("/add/address/del/:id", async function (request, response) {
+  app.post("/add/address/del/:id", async function (request, response) {
  
     const data = request.body;
     const {id} = request.params;
@@ -783,9 +799,14 @@ const addressdata = getdataup.address
       const getdataup = await client
       .db("userdetails")
       .collection("user-accounts")
-      .updateOne({_id:new ObjectId(id)},{ $pull: { address: { $in: [ { $slice: [data.iddata, 1] } ] } } } )
+      .updateOne({_id:new ObjectId(id)},{
+        $pull: {
+          address: {
+            id: data.id
+          }
+        }
+      } )
   
-      // console.log(data)
   
     response.status(200).send( {"status":"200 ok"})
     
