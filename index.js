@@ -311,7 +311,7 @@ catch(err){
 
 
 // catagories 
-app.get("/products/categories/name/all",auth,async function (request, response) {
+app.get("/products/categories/name/all",async function (request, response) {
   
  
   
