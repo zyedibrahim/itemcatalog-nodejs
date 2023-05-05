@@ -453,9 +453,9 @@ const data = request.body;
   const getdataup = await client
   .db("userdetails")
   .collection("user-accounts")
-  .findOneAndUpdate({_id:new ObjectId(id)}, {$set:data}  )
+  .updateOne({_id:new ObjectId(id)}, {$set:data}  )
 
-response.status(200).send({"status": "200 Ok",  })
+response.status(200).send({"status": "200 ok"})
 
 });
 
@@ -469,35 +469,31 @@ const verifypassword = await client
 .db("userdetails")
 .collection("user-accounts")
 .findOne({_id:new ObjectId(id)})
-const hashedpassword =await generateHashedPassword(data.confirm_newpassword)
-console.log(hashedpassword);
+console.log(verifypassword);
 
 const isppasswordcheck = await bcrypt.compare(data.old_password,verifypassword.password)
+console.log(isppasswordcheck);
 
-
-
-console.log(verifypassword);
-  if(isppasswordcheck !== true ){
-    response.status(400).send({"status":"incorrect password"})
-  }
-
-else{
-  if(data.new_password === data.confirm_newpassword){
+if(isppasswordcheck === true ){
+    const hashedpassword =await generateHashedPassword(data.confirm_newpassword)
+    if(data.new_password === data.confirm_newpassword){
     
-  const getdataup = await client
-  .db("userdetails")
-  .collection("user-accounts")
-  .findOneAndUpdate({_id:new ObjectId(id)}, {$set:{password:hashedpassword}}  )
+      const getdataup = await client
+      .db("userdetails")
+      .collection("user-accounts")
+      .updateOne({_id:new ObjectId(id)}, {$set:{password:hashedpassword}}  )
+    
+    response.status(200).send({"status": "200 ok"})
+    }
+    else{
+      response.status(400).send({"status":"password must be match "})
+    }
 
-response.status(200).send({"status": "200 Ok password Changed"})
-}
-
-else{
-  response.status(400).send({"status":"password must be match "})
-}
-
-
-
+  }
+  
+  else{
+    
+    response.status(400).send({"status":"incorrect password"})
 }
 
 
