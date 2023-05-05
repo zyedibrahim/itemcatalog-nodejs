@@ -508,7 +508,6 @@ app.post("/signup", async function (request, response) {
   const {username,email,password}=request.body;
   const hashedpassword = await generateHashedPassword(password)
 
-
 try{
   const getemail = await client
   .db("userdetails")
@@ -577,10 +576,10 @@ const getotp = await client
    // send mail with defined transport object
    transporter.sendMail(mailoption,async function (err,info){
  if(err){
-  response.status(400).send({"status":"This is not a valid email"})
- }
+  console.log(info.response);
+}
  else{
-   
+ 
    console.log("email sent",info.response);
 
   }
@@ -589,9 +588,8 @@ const getotp = await client
 
 
 if(insertdata.verifyotp  !== ""){
-  response.status(200).send({"status":"OTP sended"})
+  response.status(200).send({"status":"200 ok"})
 }else{
-  
   response.status(200).send({"status":"Otp failed to sent"})
 }
 
@@ -626,7 +624,7 @@ else{
     expiresIn:"5m"
   })
 
-const link = `http://localhost:5173/users/resetpassword?id=${getemail._id}&token=${token}`
+const link = `https://grocery-item-catalog.netlify.app/users/resetpassword?id=${getemail._id}&token=${token}`
 
 response.status(200).send({"status": "Reset Link Send Successfully Sent On Register E-mail" })
   
@@ -720,17 +718,16 @@ app.post("/verifyotp", async function (request, response) {
   .collection("user-accounts")
   .findOne({verifyotp:otp})
   
-if(getotp.verifyotp === otp ){
+if(getotp?.verifyotp === otp ){
   const getotp = await client
   .db("userdetails")
   .collection("user-accounts")
   .updateOne({verifyotp:otp}, {$set : {verified: "true"}})
 
-response.status(200).send({"status": "verification success"})
-
+response.status(200).send({"status": "200 ok"})
 }
 else{
-  response.status(400),send({"status": "invalid otp"})
+  response.status(400).send({"status": "invalid otp"})
 }
 
 
