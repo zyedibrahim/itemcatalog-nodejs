@@ -469,10 +469,8 @@ const verifypassword = await client
 .db("userdetails")
 .collection("user-accounts")
 .findOne({_id:new ObjectId(id)})
-console.log(verifypassword);
 
 const isppasswordcheck = await bcrypt.compare(data.old_password,verifypassword.password)
-console.log(isppasswordcheck);
 
 if(isppasswordcheck === true ){
     const hashedpassword =await generateHashedPassword(data.confirm_newpassword)
@@ -637,7 +635,10 @@ else{
     })
   
   const link = `https://grocery-item-catalog.netlify.app/users/resetpassword?id=${getemail._id}&token=${token}`
+  // const link = `http://localhost:5173/users/resetpassword?id=${getemail._id}&token=${token}`
       
+console.log(link);
+
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
     
@@ -700,7 +701,7 @@ console.log(encryptedpass,"password");
     const getpass = await client
     .db("userdetails")
     .collection("user-accounts")
-    .findOne({_id:new ObjectId(id)},{$set : {password:encryptedpass}} )
+    .updateOne({_id:new ObjectId(id)},{$set : {password:encryptedpass}} )
    
     response.status(200).send({"status": "Password Updated Successfully",getpass})
 
