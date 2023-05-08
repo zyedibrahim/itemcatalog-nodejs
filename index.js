@@ -625,7 +625,7 @@ else{
   .collection("user-accounts")
   .findOne({email:email})
   
-  if(insertdata.verifyotp  !== ""){
+  if(insertdata.email === email){
 
 
     const secret = process.env.secretkey+getemail.password
@@ -725,16 +725,20 @@ app.post("/verifyotp", async function (request, response) {
   .collection("user-accounts")
   .findOne({verifyotp:otp})
   
-if(getotp?.verifyotp === otp ){
+if(!getotp){
+  response.status(400).send({"status": "invalid otp"})
+}
+else if(getotp.verifyotp !== otp){
+  response.status(400).send({"status": "invalid otp"})
+
+}
+else{
   const getotp = await client
   .db("userdetails")
   .collection("user-accounts")
-  .updateOne({verifyotp:otp}, {$set : {verified: "true"}})
-
-response.status(200).send({"status": "200 ok"})
-}
-else{
-  response.status(400).send({"status": "invalid otp"})
+  .updateOne({verifyotp:otp}, {$set : {verified: "true",verifyotp:""}})
+  
+  response.status(200).send({"status": "200 ok"})
 }
 
 
