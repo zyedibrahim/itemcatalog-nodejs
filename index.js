@@ -820,6 +820,20 @@ const addressdata = getdataup.address
     
     });
   
+    // feedback?
+  app.post("/feedback", async function (request, response) {
+ 
+    const data = request.body;
+    const getdataup = await client
+      .db("userdetails")
+      .collection("feedback")
+      .insertOne(data)
+  
+  
+    response.status(200).send( {"status":"200 ok"})
+    
+    })
+  
 
 
 
