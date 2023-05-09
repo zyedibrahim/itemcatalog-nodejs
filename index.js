@@ -88,7 +88,6 @@ app.get("/alluser/accounts",auth,async function  (request, response) {
    const newdata = datas
 const array =[]
 
-console.log(datas);
 
 for(let i = 0 ; i < newdata.length;i++){
 // console.log(newdata[i].username);
@@ -766,15 +765,34 @@ app.put("/add/address/:id", async function (request, response) {
  
   const data = request.body;
   const {id} = request.params;
-  const addressdata = data
+
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * 9000) + 1000;
+  }
+
+  const randomNumber = generateRandomNumber();
+
+  const addressdata = {
+    id: randomNumber,
+    country: data.country,
+    firstname: data.firstname,
+    lastname: data.lastname,
+    address: data.address,
+    state: data.state,
+    district: data.district,
+    pincode: data.pincode,
+    phone: data.phone,
+
+  }
+
 
 const newsdata = data
     const getdataup = await client
     .db("userdetails")
     .collection("user-accounts")
-    .updateOne({_id:new ObjectId(id)}, {$push: {address:newsdata}} , { new: true } )
+    .updateOne({_id:new ObjectId(id)}, {$push: {address:addressdata}} , { new: true } )
 
-    console.log(newsdata)
+  
 
   response.status(200).send( {"status":"200 ok"})
   
@@ -797,13 +815,13 @@ const addressdata = getdataup.address
   
   });
 
+
+
   app.post("/add/address/del/:id", async function (request, response) {
  
     const data = request.body;
     const {id} = request.params;
     
- console.log(data.iddata);
-//  { $pull: { address: { $in: [ { $slice: [indexToRemove, 1] } ] } } }
       const getdataup = await client
       .db("userdetails")
       .collection("user-accounts")
