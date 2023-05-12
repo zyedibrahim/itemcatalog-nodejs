@@ -1,5 +1,5 @@
 import express from "express"; // "type": "module"
-const app = express();
+// import express from "express-fileupload"
 import nodemailer from "nodemailer"
 import  Jwt, { verify }  from "jsonwebtoken";
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
@@ -9,6 +9,10 @@ import cors from "cors"
 import shortid from "shortid";
 import { MongoClient, ObjectId } from "mongodb";
 import {auth} from "./middleware/auth.js"
+const app = express();
+
+
+
 const MONGO_URL = process.env.MONGO_URL
 const client = new MongoClient(MONGO_URL); // dial
 // Top level await
@@ -38,16 +42,6 @@ app.get("/", function (request, response) {
   response.send("🙋‍♂️, 🌏 🎊✨🤩");
 });
 
-// app.delete("/products/categories/all", async function (request, response) {
-  
-
-//   const datas = await client
-//   .db("products")
-//   .collection("allproducts")
-//   .deleteMany({})
-
-//   response.send(datas);
-// });
 
 
 app.post("/products/categories/all", async function (request, response) {
@@ -851,12 +845,22 @@ const addressdata = getdataup.address
     response.status(200).send( {"status":"200 ok"})
     
     })
+
+
+    // get feedback?
+  app.get("/feedback", async function (request, response) {
+ 
+    const data = request.body;
+    const getdataup = await client
+      .db("userdetails")
+      .collection("feedback")
+      .find({})
+      .toArray({})
   
-// 
-
-
-
-
+  
+    response.status(200).send( {"status":"200 ok",data:getdataup})
+    
+    })
 
 
 
